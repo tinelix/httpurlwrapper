@@ -131,6 +131,7 @@ public final class HttpResponse {
     }
 
     public void read(String str) throws IOException {
+        StringBuilder buffer = new StringBuilder();
         String enc = getContentCharset();
         if (enc == null) {
             enc = "UTF-8";
