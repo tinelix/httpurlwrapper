@@ -130,6 +130,21 @@ public final class HttpResponse {
         }
     }
 
+    public void read(String str) throws IOException {
+        String enc = getContentCharset();
+        if (enc == null) {
+            enc = "UTF-8";
+        }
+
+        final InputStream input = getPayload();
+        final InputStreamReader reader = new InputStreamReader(input, enc);
+        final char[] inBuf = new char[64];
+        for (int charsRead; (charsRead = reader.read(inBuf)) != -1;) {
+            buffer.append(inBuf, 0, charsRead);
+        }
+        str = buffer.toString();
+    }
+
     /**
      * Get the response status code.
      */
