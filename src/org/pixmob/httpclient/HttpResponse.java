@@ -88,7 +88,7 @@ public final class HttpResponse {
     /**
      * Get the content length for this response, or <code>0</code> if unknown.
      */
-    public String getContentLength() {
+    public long getContentLength() {
         final long contentLength = getFirstHeaderValue("Content-Length");
         if (contentLength == 0) {
             return 0;
