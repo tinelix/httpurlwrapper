@@ -88,10 +88,19 @@ public final class HttpResponse {
     /**
      * Get the content length for this response, or <code>0</code> if unknown.
      */
+    /**
+     * Get the content length for this response, or <code>0</code> if unknown.
+     */
     public long getContentLength() {
-        final long contentLength = getFirstHeaderValue("Content-Length");
-        if (contentLength == 0) {
-            return 0;
+        long contentLength = 0;
+        for (Map.Entry<String, List<String>> me :
+                getHeaders().entrySet()) {
+            if(me.getKey().equals("Content-Length")) {
+                contentLength = Long.parseLong(getHeaders().get(me.getKey()).get(0));
+                if (contentLength == 0) {
+                    return 0;
+                }
+            }
         }
 
         return contentLength;
