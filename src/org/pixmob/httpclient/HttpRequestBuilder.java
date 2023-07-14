@@ -57,6 +57,7 @@ import org.apache.http.conn.ssl.BrowserCompatHostnameVerifier;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 /**
  * This class is used to prepare and execute an Http request.
