@@ -80,8 +80,10 @@ public final class HttpRequestBuilder {
     private byte[] content;
     private boolean contentSet;
     private String contentType;
+    private String streamContentType;
     private HttpResponseHandler handler;
     private InputStream contentStream;
+    private String contentDisposition;
 
     HttpRequestBuilder(final HttpClient hc, final String uri, final String method) {
         this.hc = hc;
@@ -119,7 +121,7 @@ public final class HttpRequestBuilder {
 
     public HttpRequestBuilder content(InputStream in, String contentType) {
         this.contentStream = in;
-        this.contentType = contentType;
+        this.streamContentType = contentType;
         if (in != null) {
             contentSet = true;
         }
@@ -311,13 +313,34 @@ public final class HttpRequestBuilder {
                     } else if (contentType != null) {
                         conn.setRequestProperty("Content-Type", contentType);
                     }
-                    conn.setFixedLengthStreamingMode(contentStream.available());
+                    String body_header = "";
+                    if(contentDisposition != null && contentDisposition.length() > 0) {
+                        if (streamContentType != null && streamContentType.length() > 0) {
+                            body_header = String.format(
+                                    "--*****\r\n" +
+                                            "Content-Disposition: %s\r\n" +
+                                            "Content-Transfer-Encoding: binary\r\n\r\n",
+                                    contentDisposition);
+                        } else {
+                            body_header = String.format(
+                                    "--*****\r\n" +
+                                            "Content-Disposition: %s\r\n" +
+                                            "Content-Type: %s\r\n" +
+                                            "Content-Transfer-Encoding: binary\r\n\r\n",
+                                    contentDisposition, streamContentType);
+                        }
+                    }
+                    conn.setFixedLengthStreamingMode(contentStream.available() +
+                            body_header.length() + "--*****--\r\n".length());
 
                     final OutputStream out = conn.getOutputStream();
+                    out.write(body_header.getBytes());
                     int bytes = 0;
+
                     while((bytes = contentStream.read()) != -1) {
                         out.write(bytes);
                     }
+                    out.write("--*****--\r\n".getBytes());
                     out.flush();
                 } else {
                     conn.setFixedLengthStreamingMode(0);
@@ -591,5 +614,9 @@ public final class HttpRequestBuilder {
         }
 
         conn.setHostnameVerifier(new BrowserCompatHostnameVerifier());
+    }
+
+    public void contentDisposition(String contentDisposition) {
+        this.contentDisposition = contentDisposition;
     }
 }
