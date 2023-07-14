@@ -38,10 +38,12 @@ public final class HttpResponse {
     private final Map<String, String> cookies;
     private final Map<String, List<String>> headers;
     private InputStream payload;
+    private long contentLength;
 
     HttpResponse(final int statusCode, final InputStream payload, final Map<String, List<String>> rawHeaders,
-            final Map<String, String> cookies) {
+            final Map<String, String> cookies, long contentLength) {
         this.statusCode = statusCode;
+        this.contentLength = contentLength;
         this.payload = payload;
         this.cookies = Collections.unmodifiableMap(cookies);
 
@@ -88,21 +90,7 @@ public final class HttpResponse {
     /**
      * Get the content length for this response, or <code>0</code> if unknown.
      */
-    /**
-     * Get the content length for this response, or <code>0</code> if unknown.
-     */
     public long getContentLength() {
-        long contentLength = 0;
-        for (Map.Entry<String, List<String>> me :
-                getHeaders().entrySet()) {
-            if(me.getKey().equals("Content-Length")) {
-                contentLength = Long.parseLong(getHeaders().get(me.getKey()).get(0));
-                if (contentLength == 0) {
-                    return 0;
-                }
-            }
-        }
-
         return contentLength;
     }
 
@@ -167,6 +155,24 @@ public final class HttpResponse {
         str = buffer.toString();
     }
 
+    public String readString() throws IOException {
+        String str;
+        StringBuilder buffer = new StringBuilder();
+        String enc = getContentCharset();
+        if (enc == null) {
+            enc = "UTF-8";
+        }
+
+        final InputStream input = getPayload();
+        final InputStreamReader reader = new InputStreamReader(input, enc);
+        final char[] inBuf = new char[64];
+        for (int charsRead; (charsRead = reader.read(inBuf)) != -1;) {
+            buffer.append(inBuf, 0, charsRead);
+        }
+        str = buffer.toString();
+        return str;
+    }
+
     /**
      * Get the response status code.
      */
@@ -198,4 +204,5 @@ public final class HttpResponse {
     public Map<String, String> getCookies() {
         return cookies;
     }
+
 }
