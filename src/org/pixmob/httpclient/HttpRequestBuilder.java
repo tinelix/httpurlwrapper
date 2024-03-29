@@ -85,6 +85,7 @@ public final class HttpRequestBuilder {
     private InputStream contentStream;
     private String contentDisposition;
     private HttpProgressHandler progressHandler;
+    private SSLSocketFactory ssf;
 
     HttpRequestBuilder(final HttpClient hc, final String uri, final String method) {
         this.hc = hc;
@@ -296,7 +297,11 @@ public final class HttpRequestBuilder {
             conn.setRequestProperty("Accept-Charset", CONTENT_CHARSET);
 
             if (conn instanceof HttpsURLConnection) {
-                setupSecureConnection(hc.getContext(), (HttpsURLConnection) conn);
+                if(ssf != null) {
+                    setupSecureConnection(hc.getContext(), (HttpsURLConnection) conn);
+                } else {
+                    setupSecureConnection(hc.getContext(), ssf, (HttpsURLConnection) conn);
+                }
             }
 
             if (HTTP_POST.equals(method) || HTTP_DELETE.equals(method) || HTTP_PUT.equals(method)) {
@@ -593,7 +598,7 @@ public final class HttpRequestBuilder {
 
                 @Override
                 public Socket createSocket(InetAddress address, int port, InetAddress localAddress,
-                        int localPort) throws IOException {
+                                           int localPort) throws IOException {
                     return delegate.createSocket(address, port, localAddress, localPort);
                 }
 
@@ -638,6 +643,12 @@ public final class HttpRequestBuilder {
         if(ssf != null) {
             conn.setSSLSocketFactory(ssf);
             conn.setHostnameVerifier(new BrowserCompatHostnameVerifier());
+        }
+    }
+
+    public void setupSecureConnection(Context context, SSLSocketFactory ssf) throws IOException {
+        if(ssf != null) {
+            this.ssf = ssf;
         }
     }
 
