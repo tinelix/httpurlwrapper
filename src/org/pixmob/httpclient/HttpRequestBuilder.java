@@ -635,8 +635,10 @@ public final class HttpRequestBuilder {
      * Setup SSL connection with custom SSLSocketFactory.
      */
     private static void setupSecureConnection(Context context, SSLSocketFactory ssf, HttpsURLConnection conn) throws IOException {
-        conn.setSSLSocketFactory(ssf);
-        conn.setHostnameVerifier(new BrowserCompatHostnameVerifier());
+        if(ssf != null) {
+            conn.setSSLSocketFactory(ssf);
+            conn.setHostnameVerifier(new BrowserCompatHostnameVerifier());
+        }
     }
 
     public void contentDisposition(String contentDisposition) {
