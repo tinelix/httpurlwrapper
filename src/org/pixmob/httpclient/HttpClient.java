@@ -29,6 +29,8 @@ import java.util.Map;
 import android.content.Context;
 import android.os.Build;
 
+import javax.net.ssl.SSLSocketFactory;
+
 /**
  * The Http client is responsible for sending Http requests.
  * @author Pixmob
