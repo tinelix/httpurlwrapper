@@ -367,9 +367,7 @@ public final class HttpRequestBuilder {
                             }
                         }
                     }
-                    if(contentDisposition != null && contentDisposition.length() > 0) {
-                        out.write("\r\n--*****--\r\n".getBytes());
-                    }
+                    out.write("\r\n--*****--\r\n".getBytes());
                     out.flush();
                 } else {
                     conn.setFixedLengthStreamingMode(0);
