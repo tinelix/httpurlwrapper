@@ -367,7 +367,9 @@ public final class HttpRequestBuilder {
                             }
                         }
                     }
-                    out.write("\r\n--*****--\r\n".getBytes());
+                    if(contentDisposition != null && contentDisposition.length() > 0) {
+                        out.write("\r\n--*****--\r\n".getBytes());
+                    }
                     out.flush();
                 } else {
                     conn.setFixedLengthStreamingMode(0);
@@ -646,10 +648,8 @@ public final class HttpRequestBuilder {
         }
     }
 
-    public void setupSecureConnection(Context context, SSLSocketFactory ssf) throws IOException {
-        if(ssf != null) {
-            this.ssf = ssf;
-        }
+    public void setupSecureConnection(SSLSocketFactory ssf) throws IOException {
+        this.ssf = ssf;
     }
 
     public void contentDisposition(String contentDisposition) {
