@@ -49,6 +49,7 @@ public final class HttpClient {
     private String userAgent;
     private final Map<String, String> inMemoryCookies = new HashMap<String, String>(8);
     private Proxy proxy;
+    private SSLSocketFactory ssf;
 
     /**
      * Create a new instance for this {@link Context}.
@@ -186,5 +187,17 @@ public final class HttpClient {
 
     public Proxy getProxy() {
         return proxy;
+    }
+
+    /**
+     * Set the SSLSocketFactory for flexible certificate management.
+     */
+
+    public void setSSLStore(SSLSocketFactory ssf) {
+        this.ssf = ssf;
+    }
+
+    public SSLSocketFactory getSSLStore() {
+        return ssf;
     }
 }

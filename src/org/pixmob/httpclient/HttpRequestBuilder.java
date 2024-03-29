@@ -566,7 +566,6 @@ public final class HttpRequestBuilder {
             ioe.initCause(e);
             throw ioe;
         }
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             // Fix slow read:
             // http://code.google.com/p/android/issues/detail?id=13117
@@ -629,6 +628,14 @@ public final class HttpRequestBuilder {
             conn.setSSLSocketFactory(sslContext.getSocketFactory());
         }
 
+        conn.setHostnameVerifier(new BrowserCompatHostnameVerifier());
+    }
+
+    /**
+     * Setup SSL connection with custom SSLSocketFactory.
+     */
+    private static void setupSecureConnection(Context context, SSLSocketFactory ssf, HttpsURLConnection conn) throws IOException {
+        conn.setSSLSocketFactory(ssf);
         conn.setHostnameVerifier(new BrowserCompatHostnameVerifier());
     }
 
