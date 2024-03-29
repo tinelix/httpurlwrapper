@@ -298,9 +298,9 @@ public final class HttpRequestBuilder {
 
             if (conn instanceof HttpsURLConnection) {
                 if(ssf != null) {
-                    setupSecureConnection(hc.getContext(), (HttpsURLConnection) conn);
-                } else {
                     setupSecureConnection(hc.getContext(), ssf, (HttpsURLConnection) conn);
+                } else {
+                    setupSecureConnection(hc.getContext(), (HttpsURLConnection) conn);
                 }
             }
 
