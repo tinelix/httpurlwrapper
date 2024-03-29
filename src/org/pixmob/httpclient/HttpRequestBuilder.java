@@ -298,7 +298,7 @@ public final class HttpRequestBuilder {
 
             if (conn instanceof HttpsURLConnection) {
                 if(ssf != null) {
-                    setupSecureConnection(hc.getContext(), ssf, (HttpsURLConnection) conn);
+                    setupSecureConnection(ssf, (HttpsURLConnection) conn);
                 } else {
                     setupSecureConnection(hc.getContext(), (HttpsURLConnection) conn);
                 }
@@ -639,7 +639,7 @@ public final class HttpRequestBuilder {
     /**
      * Setup SSL connection with custom SSLSocketFactory.
      */
-    public static void setupSecureConnection(Context context, SSLSocketFactory ssf, HttpsURLConnection conn) throws IOException {
+    public static void setupSecureConnection(SSLSocketFactory ssf, HttpsURLConnection conn) throws IOException {
         if(ssf != null) {
             conn.setSSLSocketFactory(ssf);
             conn.setHostnameVerifier(new BrowserCompatHostnameVerifier());
